@@ -1,8 +1,4 @@
-﻿// var spinner = new Spinner("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏");
-// var spinner = new Spinner("🌑🌒🌓🌔🌕🌖🌗🌘");
-// var spinner = new Spinner("🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚");
-// var spinner = new Spinner("◲◲◲◲◳◰◱");
-using System.CommandLine;
+﻿using System.CommandLine;
 
 const string DefaultSpinner = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
 const int DefaultDuration = 200;
@@ -21,7 +17,7 @@ await root.InvokeAsync(args);
 
 void RootHandler(string spinnerChars, int duration)
 {
-  var spinner = new Spinner("⢤⣠⣄⡤⠖⠋⠖⡤");
+  var spinner = new Spinner(spinnerChars);
   var cursor = Console.GetCursorPosition();
   Console.ForegroundColor = ConsoleColor.Red;
   Console.CursorVisible = false;

@@ -2,28 +2,45 @@
 // var spinner = new Spinner("🌑🌒🌓🌔🌕🌖🌗🌘");
 // var spinner = new Spinner("🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚");
 // var spinner = new Spinner("◲◲◲◲◳◰◱");
-var spinner = new Spinner("⢤⣠⣄⡤⠖⠋⠖⡤");
-var duration = 200;
+using System.CommandLine;
 
-var cursor = Console.GetCursorPosition();
-Console.ForegroundColor = ConsoleColor.Red;
-Console.CursorVisible = false;
-var thread = new Thread(() =>
+const string DefaultSpinner = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+const int DefaultDuration = 200;
+
+
+var spinnerOption = new Option<string>(["--spinner", "-s"], description: "Spinner to write", getDefaultValue: () => DefaultSpinner);
+var durationOption = new Option<int>(["--duration", "-d"], description: "Duration to show single char (ms)", getDefaultValue: () => DefaultDuration);
+
+var root = new RootCommand(description: "Writes simple little spinner to the terminal. Stops on any input given")
 {
-  while (true)
+  spinnerOption, durationOption
+};
+root.SetHandler(RootHandler, spinnerOption, durationOption);
+await root.InvokeAsync(args);
+
+
+void RootHandler(string spinnerChars, int duration)
+{
+  var spinner = new Spinner("⢤⣠⣄⡤⠖⠋⠖⡤");
+  var cursor = Console.GetCursorPosition();
+  Console.ForegroundColor = ConsoleColor.Red;
+  Console.CursorVisible = false;
+  var thread = new Thread(() =>
   {
-    spinner.PrintNext();
-    Thread.Sleep(duration);
-  }
-});
-thread.Start();
+    while (true)
+    {
+      spinner.PrintNext();
+      Thread.Sleep(duration);
+    }
+  });
+  thread.Start();
 
-Console.ReadKey();
-Console.CursorVisible = true;
+  Console.ReadKey();
+  Console.CursorVisible = true;
 
 
-thread.Interrupt();
-
+  thread.Interrupt();
+}
 class CursorPosition : Tuple<int, int>
 {
   public CursorPosition(int left, int top) : base(left, top)
